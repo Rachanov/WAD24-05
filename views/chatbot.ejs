@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Style Chat</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chatbox {
+            width: 400px;
+            height: 600px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f0f4f7;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 12px 18px;
+            border-radius: 20px;
+            max-width: 70%;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .user {
+            background-color: #007aff;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .bot {
+            background-color: #e1e1e1;
+            color: black;
+            align-self: flex-start;
+        }
+
+        #input {
+            display: flex;
+            padding: 10px;
+            background-color: white;
+            border-top: 1px solid #ccc;
+        }
+
+        #input input {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: 25px;
+            background-color: #f0f4f7;
+            font-size: 14px;
+            outline: none;
+        }
+
+        #input button {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-left: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #input button:hover {
+            background-color: #005bb5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chatbox">
+        <div id="messages"></div>
+        <div id="input">
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                userInput.value = '';
+
+                // Simulate bot response
+                setTimeout(() => {
+                    const botResponse = generateBotResponse(message);
+                    addMessage(botResponse, 'bot');
+                }, 500);
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function generateBotResponse(userMessage) {
+            // Simple responses for demo purposes
+            if (userMessage.toLowerCase().includes('hello')) {
+                return "Hi! How can I assist you today?";
+            } else if (userMessage.toLowerCase().includes('bye')) {
+                return "Goodbye! Take care!";
+            } else {
+                return "I'm here to help, feel free to ask anything.";
+            }
+        }
+    </script>
+
+</body>
+</html>
