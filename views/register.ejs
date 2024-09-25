@@ -7,16 +7,16 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.84.0">
-    <title>Signin Template · Bootstrap v5.0</title>
+    <title>SignUp Template</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
 
     
 
-    <!-- Bootstrap core CSS -->
+   
 <link href="/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-    <!-- Favicons -->
+ 
 <link rel="apple-touch-icon" href="/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
 <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
@@ -43,22 +43,30 @@
     </style>
 
     
-    <!-- Custom styles for this template -->
+    
     <link href="/css/signin.css" rel="stylesheet">
   </head>
   <body class="text-center">
     
 <main class="form-signin">
   <form action="/user/register" method="POST">
-    <!-- <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
+    
     <h1 class="h3 mb-3 fw-normal">Sign Up</h1>
 
+    <% if(errors != null && errors.length > 0) { %>
+      <% for(let i = 0; i < errors.length; i++) { %>
+          <p class="alert alert-danger">
+              <%= errors[i] %>
+          </p>
+      <% } %>
+  <% } %>
+
     <div class="form-floating">
-      <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <input type="email" name="email" value="<%= email %>" class="form-control" id="floatingInput" placeholder="name@example.com">
       <label for="floatingInput">Email address</label>
     </div>
     <div class="form-floating">
-      <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
+      <input type="password" name="password"  value="<%= password %>" class="form-control" id="floatingPassword" placeholder="Password">
       <label for="floatingPassword">Password</label>
     </div>
 
@@ -67,8 +75,8 @@
         <input type="checkbox" value="remember-me"> Remember me
       </label>
     </div>
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign Up</button>
-    <p class="mt-5 mb-3 text-muted">&copy; มาก</p>
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+    <p class="mt-5 mb-3 text-muted">&copy; 2024</p>
   </form>
 </main>
 
@@ -76,3 +84,85 @@
     
   </body>
 </html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Register Page</title>
+  </head>
+  <body>
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+      <div
+        class="relative flex flex-col m-6 space-y-8 bg-white shadow-2xl rounded-2xl md:flex-row md:space-y-0"
+      >
+    
+        <div class="flex flex-col justify-center p-8 md:p-14">
+          <span class="mb-3 text-4xl font-bold">Register</span>
+          <span class="font-light text-gray-400 mb-8">
+            Welcome ! Please enter your details
+          </span>
+          <div class="py-4">
+            <span class="mb-2 text-md">Email</span>
+            <input
+              type="text"
+              class="w-full p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500"
+              name="email"
+              id="email"
+            />
+          </div>
+          <div class="py-4">
+            <span class="mb-2 text-md">Password</span>
+            <input
+              type="password"
+              name="pass"
+              id="pass"
+              class="w-full p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500"
+            />
+          </div>
+          <div class="flex justify-between w-full py-4">
+            <div class="mr-24">
+              <input type="checkbox" name="ch" id="ch" class="mr-2" />
+              <span class="text-md">Remember</span>
+            </div>
+            <span class="font-bold text-md">Forgot password ?</span>
+          </div>
+          <button 
+            class="w-full bg-black text-white p-2 rounded-lg mb-6 hover:bg-white hover:text-black hover:border hover:border-gray-300"
+          >
+            Sign UP
+          </button>
+          <button
+            class="w-full border border-gray-300 text-md p-2 rounded-lg mb-6 hover:bg-black hover:text-white"
+          >
+            <img src="images/google.svg" alt="img" class="w-6 h-6 inline mr-2" />
+            Sign in with Google
+          </button>
+          <div class="text-center text-gray-400">
+            Dont'have an account?
+            <span class="font-bold text-black" href="/register">Sign up for free !</span>
+          </div>
+        </div> -->
+        
+        <!-- <div class="relative">
+          <img
+            src=""
+            alt="img"
+            class="w-[400px] h-full hidden rounded-r-2xl md:block object-cover"
+          />
+          
+          <div
+            class="absolute hidden bottom-10 right-6 p-6 bg-white bg-opacity-30 backdrop-blur-sm rounded drop-shadow-lg md:block"
+          >
+            <span class="text-white text-xl"
+              >We've been uesing Untitle to kick"<br />start every new project
+              and can't <br />imagine working without it."
+            </span>
+          </div>
+        </div> 
+      </div>
+    </div>
+  </body>
+</html> -->
