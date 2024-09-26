@@ -1,0 +1,35 @@
+.content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    text-align: center;
+}
+
+.startButton {
+    display: flex;
+    background-color: #E6B9A6;
+    color: #2F3645;
+    border-radius: 20rem;
+    text-decoration: none;
+    padding: 8px 25px 12px 25px;
+    text-align: center;
+    box-shadow: 5px 5px #2F3645;
+    justify-content: center;
+    align-items: center;
+    transform-origin: center;
+    transition: all 0.3s ease ;
+}
+
+.startButton:hover {
+    /* scale: 0.95;   */
+    /* #FFD369 */
+    translate: 5px 5px;
+    /* margin-top: 6px;
+    margin-left: 6px; */
+    background-color: #FFD369;
+    color: #2F3645;
+    box-shadow: 0px 0px #2F3645;
+}
+
