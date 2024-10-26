@@ -1,0 +1,19 @@
+.nav-home {
+
+}
+.start-btn {
+    background-color: #E6B9A6;
+    color: #2F3645;
+    border-radius: 20rem;
+    text-decoration: none;
+    padding: 8px 25px 12px 25px;
+    text-align: center;
+    font-weight: bolder;
+    box-shadow: 5px 5px #2F3645;
+    cursor: pointer;
+}
+
+.start-btn:hover {
+    box-shadow: inset 0px 5px 5px rgba(0, 0, 0, 0.3);
+    color: #2F3645;
+}
