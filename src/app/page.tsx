@@ -4,7 +4,6 @@ import React, { use } from 'react';
 import NavBar from './components/navbar';
 import "./styles/home.css"
 import Link from 'next/link';
-import "./homepic.png";
 
 const page: React.FC = () => {
   return (

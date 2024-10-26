@@ -25,3 +25,14 @@ body {
     text-wrap: balance;
   }
 }
+
+[data-theme='light'] {
+  --bg-color: #ffffff; /* สีพื้นหลัง */
+  --text-color: #000000; /* สีข้อความ */
+}
+
+/* สำหรับธีม Dark */
+[data-theme='dark'] {
+  --bg-color: #000000; /* สีพื้นหลัง */
+  --text-color: #ffffff; /* สีข้อความ */
+}

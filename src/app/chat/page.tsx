@@ -13,9 +13,17 @@ import { Inbox } from 'lucide-react';
 import Link from 'next/link';
 
 
+
 const ChatComponent: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const handleThemeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTheme = e.target.checked ? 'dark' : 'light'; // เปลี่ยนธีมตามสถานะ checkbox
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme); // อัปเดตธีมใน HTML
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -30,9 +38,14 @@ const ChatComponent: React.FC = () => {
   };
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [isSettingsOpen, setSettingsOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
+  };
+
+  const toggleSettings = () => {
+    setSettingsOpen(!isSettingsOpen);
   };
 
   return (
@@ -40,12 +53,34 @@ const ChatComponent: React.FC = () => {
       {/* content */}
       <div className="flex flex-row h-full w-full overflow-x-hidden bg-white">
         {/* left menu section */}
-        <div className={`flex flex-col space h-full p-6 py-8 pl-6 pr-2 w-[13%] flex-shrink-0 bg-white text-black transition-all duration-300 ${isSidebarOpen ? 'w-1/4' : 'w-16'}`}>
+        <div className={`flex flex-col h-full p-6 py-8 pl-6 pr-2 bg-white text-black transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-1/6' : 'w-16'
+          }`}>
           {/* recent(history) */}
           <div className="flex flex-col mt-0 flex-grow justify-between">
             <div className="flex flex-row items-center justify-between text-xs">
-              <button onClick={toggleSidebar}><Menu /></button>
-              {isSidebarOpen && (<button><MessageSquarePlus /></button>)}
+              <button onClick={toggleSidebar} className='h-8 w-8'><Menu /></button>
+              {isSidebarOpen && (<label className="swap swap-rotate">
+                {/* this hidden checkbox controls the state */}
+                <input type="checkbox" className="theme-controller" value="synthwave" />
+
+                {/* sun icon */}
+                <svg
+                  className="swap-off h-8 w-8 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24">
+                  <path
+                    d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                </svg>
+
+                {/* moon icon */}
+                <svg
+                  className="swap-on h-8 w-8 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24">
+                  <path
+                    d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                </svg>
+              </label>)}
             </div>
             {/* <div className="flex flex-row items-center text-xs">
               <span className="text-3xl text-black font-bold mt-5">Recent</span>
@@ -58,26 +93,28 @@ const ChatComponent: React.FC = () => {
                 <div className='border-t-2 w-full border-[#FFC100]'></div>
                 </div> */}
                 <div className="flex flex-col space-y-1 mt-4 ml-3">
-                  <button className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
+                  <Link href={"/"} className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
                     <div><House /></div>
                     <div className="ml-3 text-xl">Home</div>
-                  </button>
-                  <button className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
+                  </Link>
+                  {/* <button className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
                     <div><CircleHelp /></div>
                     <div className="ml-3 text-xl">Help</div>
-                  </button>
-                  <button className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
-                    <div><Smile /></div>
-                    <div className="ml-3 text-xl">About Us</div>
-                  </button>
-                  <button className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
+                  </button> */}
+                  <Link href={"/feedback"} className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
                     <div><Inbox /></div>
                     <div className="ml-3 text-xl">Feedback</div>
-                  </button>
-                  <button className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
-                    <div><Settings /></div>
-                    <div className="ml-3 text-xl">Setting</div>
-                  </button>
+                  </Link>
+                  <Link href={"/about-us"} className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
+                    <div><Smile /></div>
+                    <div className="ml-3 text-xl">About Us</div>
+                  </Link>
+                  {/* <div className="relative">
+                    <button onClick={toggleSettings} className="flex flex-row items-center hover:bg-black hover:text-white rounded-xl p-2">
+                      <div><Settings /></div>
+                      <div className="ml-3 text-xl">Setting</div>
+                    </button>
+                  </div> */}
                 </div>
               </div>
             )}
@@ -92,22 +129,6 @@ const ChatComponent: React.FC = () => {
         <div className="flex flex-col flex-auto h-full p-6">
           {/* dronejai */}
           <div className="flex flex-row items-center h-14 w-full mb-0 bg-gray-100 rounded-t-2xl">
-            {/* <div className="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                />
-              </svg>
-            </div> */}
             <Link href={"/"}>
               <div className="ml-5 text-2xl">Dronejai</div>
             </Link>
@@ -115,7 +136,7 @@ const ChatComponent: React.FC = () => {
           {/* chatmessage */}
           <div className="flex flex-col flex-auto flex-shrink-0 rounded-b-2xl bg-gray-100 h-auto p-4 relative">
             {/* <div className='text-[#E6B9A6] border-opacity-8 text-3xl'>Ask me anythings</div> */}
-            
+
             <div className="flex flex-col h-full overflow-x-auto mb-4">
               <div className="flex flex-col h-full">
                 <div className="grid grid-cols-12 gap-y-2">
@@ -180,7 +201,7 @@ const ChatComponent: React.FC = () => {
                     value={inputValue}
                     onChange={handleInputChange}
                     onKeyPress={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
-                    className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                    className="flex w-full border rounded-xl focus:outline-none max-w-full focus:border-indigo-300 pl-4 h-10"
                   />
                 </div>
               </div>

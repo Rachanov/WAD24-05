@@ -13,7 +13,7 @@ const NavBar: React.FC = () => {
       <table className='w-full table-fixed'>
         <thead>
           <tr className='flex justify-between'>
-            <td className='flex items-start justify-start ml-14 flex-1'><Link href="#home" className="py-4 text-black text-2xl">Dronejai</Link></td>
+            <td className='flex items-start justify-start ml-14 flex-1'><Link href="/" className="py-4 text-black text-2xl">Dronejai</Link></td>
             <td className="flex items-center justify-center flex-1">
               {buttonDic.map((buttonData, index) => (
                 <Link href={buttonData.href} key={index} className='p-4 after:duration-500 ease-out after:block after:h-0.5 after:w-full after:origin-bottom-center after:scale-x-0 after:bg-black after:transition-transform after:hover:origin-bottom-center after:hover:scale-x-100'>{buttonData.text}</Link>
