@@ -1,4 +1,5 @@
 import os
+import re
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 import torch
 from datasets import load_dataset
@@ -9,6 +10,7 @@ from transformers import (
     TrainingArguments,
     Trainer
 )
+from langdetect import detect
 from peft import LoraConfig, get_peft_model
 
 def prepare_model():
@@ -24,7 +26,7 @@ def prepare_model():
     
     # โหลด base model
     model = AutoModelForCausalLM.from_pretrained(
-        "meta-llama/Llama-3.2-1B",
+        "meta-llama/Llama-2-7b-chat-hf",
         quantization_config=bnb_config,
         device_map={"": device},  # แก้ไขตรงนี้
         trust_remote_code=True,
@@ -32,7 +34,7 @@ def prepare_model():
     
     # โหลด tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
-        "meta-llama/Llama-3.2-1B",
+        "meta-llama/Llama-2-7b-chat-hf",
         trust_remote_code=True
     )
     tokenizer.pad_token = tokenizer.eos_token
@@ -59,17 +61,62 @@ def prepare_training_dataset(data_path):
     dataset = load_dataset('json', data_files=data_path)
     return dataset['train']
     
-    # def format_instruction(example):
-    #     """
-    #     แปลงข้อมูลให้อยู่ในรูปแบบที่เหมาะสมสำหรับการ training
-    #     """
-    #     return {
-    #         'text': f"### Question: {example['question']}\n### Answer: {example['answer']}"
-    #     }
+    def format_instruction(example):
+        """
+        แปลงข้อมูลให้อยู่ในรูปแบบที่เหมาะสมสำหรับการ training
+        """
+        return {
+            'text': f"### Question: {example['question']}\n### Answer: {example['answer']}"
+        }
     
-    # formatted_dataset = dataset.map(format_instruction)
-    # return formatted_dataset
+    formatted_dataset = dataset.map(format_instruction)
+    return formatted_dataset
+def detect_language(text):
+    """
+    ตรวจสอบภาษาของข้อความ
+    returns: 'th' สำหรับภาษาไทย, 'en' สำหรับภาษาอังกฤษ
+    """
+    try:
+        # ตรวจสอบว่ามีตัวอักษรไทยหรือไม่
+        thai_pattern = re.compile('[\u0E00-\u0E7F]')
+        if thai_pattern.search(text):
+            return 'th'
+        return 'en'
+    except:
+        return 'en'  # default to English if detection fails
 
+def format_prompt(question, lang):
+    """
+    จัดรูปแบบ prompt ตามภาษาที่ใช้
+    """
+    if lang == 'th':
+        return f"### คำถาม: {question}\n### คำตอบ:"
+    else:
+        return f"### Question: {question}\n### Answer:"
+
+def prepare_training_dataset(data_path):
+    """
+    เตรียม dataset โดยเพิ่มการระบุภาษา
+    """
+    dataset = load_dataset('json', data_files=data_path)
+    
+    def format_instruction(example):
+        # ตรวจจับภาษาของคำถาม
+        lang = detect_language(example['question'])
+        
+        # กำหนดรูปแบบตามภาษา
+        if lang == 'th':
+            prompt = f"### คำถาม: {example['question']}\n### คำตอบ: {example['answer']}"
+        else:
+            prompt = f"### Question: {example['question']}\n### Answer: {example['answer']}"
+            
+        return {
+            'text': prompt,
+            'language': lang
+        }
+    
+    formatted_dataset = dataset['train'].map(format_instruction)
+    return formatted_dataset
 def train_model(model, tokenizer, dataset, output_dir):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
@@ -106,30 +153,38 @@ def train_model(model, tokenizer, dataset, output_dir):
     )
     
     return trainer
-
 def test_model(model, tokenizer, question):
-    prompt = f"### คำถาม: {question}\n### คำตอบ:"
+    """
+    ทดสอบโมเดลโดยรองรับหลายภาษา
+    """
+    # ตรวจจับภาษาของคำถาม
+    lang = detect_language(question)
+    
+    # สร้าง prompt ตามภาษา
+    prompt = format_prompt(question, lang)
+    
+    # แปลงเป็น tensor และส่งไปยังอุปกรณ์ที่ใช้
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     
     outputs = model.generate(
         **inputs,
-        max_new_tokens=256,          # ลดจำนวน tokens ลงจาก 512
-        temperature=0.3,             # ลดค่า temperature ลงจาก 0.7 เพื่อให้คำตอบมีความแน่นอนมากขึ้น
+        max_new_tokens=512,
+        temperature=0.7,
         num_return_sequences=1,
-        do_sample=True,             # เปิดใช้การสุ่มเพื่อให้คำตอบหลากหลาย
-        top_p=0.95,                 # กำหนดค่า top_p เพื่อกรองความน่าจะเป็นของ tokens
-        top_k=50,                   # กำหนดค่า top_k เพื่อจำกัดจำนวน tokens ที่จะเลือก
-        repetition_penalty=1.2,     # เพิ่ม penalty สำหรับคำที่ซ้ำ
-        no_repeat_ngram_size=3,     # ป้องกันการซ้ำของกลุ่มคำ 3 คำติดกัน
-        early_stopping=True         # หยุดการ generate เมื่อเจอ token จบประโยค
     )
     
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    
+    # แยกคำตอบออกจาก prompt
+    if lang == 'th':
+        response = response.split("### คำตอบ:")[-1].strip()
+    else:
+        response = response.split("### Answer:")[-1].strip()
+    
     return response
 
 def main():
     try:
-        # Set device
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Using device: {device}")
         
@@ -138,44 +193,36 @@ def main():
         
         print("Preparing model and tokenizer...")
         model, tokenizer = prepare_model()
-        
-        # Move model to correct device
         model = model.to(device)
         
         print("Preparing LoRA configuration...")
-        # 2. เตรียม LoRA configuration
         lora_config = prepare_lora_config()
         
         print("Converting to PEFT model...")
-        # 3. แปลง model เป็น PEFT model
         model = get_peft_model(model, lora_config)
         
         print("Loading dataset...")
-        # 4. เตรียม dataset
         dataset = prepare_training_dataset("./fineTuning1.json")
         print(f"Dataset size: {len(dataset)} examples")
         
         print("Starting training...")
-        # 5. Train model
-        trainer = train_model(model, tokenizer, dataset, "./llama_agriculture_model")
+        trainer = train_model(model, tokenizer, dataset, "./llama_multilingual_model")
         
         print("Saving model...")
-        # 6. Save trained model
-        trainer.save_model("llama-3.2")
+        trainer.save_model("multimodel")
         
         print("Testing model...")
-        test_question = "โดรนทางการเกษตรคืออะไร"
-        response = test_model(model, tokenizer, test_question)
-        print(f"คำถาม: {test_question}")
-        print(f"คำตอบ: {response}")
-        test_question = "โดรนเกษตรแบบใดเหมาะกับผู้ใช้มือใหม่"
-        response = test_model(model, tokenizer, test_question)
-        print(f"คำถาม: {test_question}")
-        print(f"คำตอบ: {response}")
-        test_question = "น้องหนาวน่ารักมั้ย"
-        response = test_model(model, tokenizer, test_question)
-        print(f"คำถาม: {test_question}")
-        print(f"คำตอบ: {response}")
+        # ทดสอบด้วยคำถามภาษาไทย
+        thai_question = "อากาศเป็นยังไงบ้างวันนี้"
+        thai_response = test_model(model, tokenizer, thai_question)
+        print(f"คำถาม: {thai_question}")
+        print(f"คำตอบ: {thai_response}")
+        
+        # ทดสอบด้วยคำถามภาษาอังกฤษ
+        eng_question = "What day is today?"
+        eng_response = test_model(model, tokenizer, eng_question)
+        print(f"Question: {eng_question}")
+        print(f"Answer: {eng_response}")
         
     except Exception as e:
         print(f"เกิดข้อผิดพลาด: {str(e)}")
