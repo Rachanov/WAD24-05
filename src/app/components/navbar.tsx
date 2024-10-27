@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const NavBar: React.FC = () => {
 
-  const buttonDic = [{ text: "Chat", href: "/chat" }, { text: "Feedback", href: "/feedback" }, { text: "About Us", href: "/about-us" }]
+  const buttonDic = [{ text: "Home", href: "/" }, { text: "Feedback", href: "/feedback" }, { text: "About Us", href: "/about-us" }]
 
 
   return (
@@ -20,8 +20,8 @@ const NavBar: React.FC = () => {
               ))}
             </td>
             <td className="flex items-center justify-end flex-1 mr-14">
-                <button className="text-white bg-black border-black border-2 rounded-xl w-28 py-1.5">Sign Up</button>
-                <button className=" bg-white rounded-xl border-black border-2 w-28 py-1.5 ml-3">Log In</button>
+                <button className="btn btn-neutral text-white bg-black border-black border-2 rounded-xl w-28 py-1.5">Sign Up</button>
+                <button className="btn bg-white rounded-xl border-black border-2 w-28 py-1.5 ml-3">Log In</button>
             </td>
           </tr>
         </thead>

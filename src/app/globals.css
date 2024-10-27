@@ -26,13 +26,32 @@ body {
   }
 }
 
-[data-theme='light'] {
-  --bg-color: #ffffff; /* สีพื้นหลัง */
-  --text-color: #000000; /* สีข้อความ */
+
+:root[data-theme='light'] {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --sidebar-bg: #f8f9fa;
+  --input-bg: #f5f5f5;
 }
 
-/* สำหรับธีม Dark */
-[data-theme='dark'] {
-  --bg-color: #000000; /* สีพื้นหลัง */
-  --text-color: #ffffff; /* สีข้อความ */
+:root[data-theme='dark'] {
+  --bg-color: #1a202c;
+  --text-color: #ffffff;
+  --sidebar-bg: #2d3748;
+  --input-bg: #4a5568;
+  --textarea-bg: #8f8f8f;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.sidebar {
+  background-color: var(--sidebar-bg);
+}
+
+input, textarea {
+  background-color: var(--textarea-bg);
+  color: var(--text-color);
 }
