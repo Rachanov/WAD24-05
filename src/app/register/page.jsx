@@ -78,11 +78,11 @@ function RegisterPage() {
     return (
         <div>
             <NavBar />
-            <div className='container mx-auto py-5'>
-                <h3>Register Page</h3>
-                <hr className='my-3' />
-                <form onSubmit={handleSubmit}>
+            <div className='container mx-auto py-5 flex justify-center items-center min-h-screen'>
 
+            
+                <form onSubmit={handleSubmit}className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-6">
+                <h3 className='text-center text-2xl font-semibold'>Register Page</h3>
                     {error && (
                         <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
                             {error}
@@ -95,14 +95,14 @@ function RegisterPage() {
                         </div>
                     )}
 
-                    <input onChange={(e) => setName(e.target.value)} className='block bg-gray-300 p-2 my-2 rounded-md' type="text" placeholder='Enter you name' />
-                    <input onChange={(e) => setEmail(e.target.value)} className='block bg-gray-300 p-2 my-2 rounded-md' type="email" placeholder='Enter you email' />
-                    <input onChange={(e) => setPassword(e.target.value)} className='block bg-gray-300 p-2 my-2 rounded-md' type="password" placeholder='Enter you password' />
-                    <input onChange={(e) => setConfirmPassword(e.target.value)} className='block bg-gray-300 p-2 my-2 rounded-md' type="password" placeholder='Confirm your password' />
-                    <button type='submit' className='bg-green-500 p-2 rounded-md text-white'>Sign Up</button>
-                </form>
+                    <input onChange={(e) => setName(e.target.value)} className='block w-full bg-gray-100 p-2 my-2 rounded-md' type="text" placeholder='Enter you name' />
+                    <input onChange={(e) => setEmail(e.target.value)} className='block w-full bg-gray-100 p-2 my-2 rounded-md' type="email" placeholder='Enter you email' />
+                    <input onChange={(e) => setPassword(e.target.value)} className='block w-full bg-gray-100 p-2 my-2 rounded-md' type="password" placeholder='Enter you password' />
+                    <input onChange={(e) => setConfirmPassword(e.target.value)} className='block w-full bg-gray-100 p-2 my-2 rounded-md' type="password" placeholder='Confirm your password' />
+                    <button type='submit' className='bg-black w-full p-2 rounded-md text-white my-2'>Sign Up</button>
                 <hr className='my-3' />
                 <p>Already have an account? go to <Link className='text-blue-500 hover:underline' href="/login">Login</Link> Page</p>
+                </form>
             </div>
         </div>
     )
