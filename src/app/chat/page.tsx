@@ -216,6 +216,20 @@ import Link from 'next/link';
 import Logo from './../../../public/logo.png';
 import Image from 'next/image';
 import { useTheme } from 'next-themes'
+import axios from 'axios';
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+interface ApiResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+}
 
 const ChatComponent: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
@@ -251,45 +265,45 @@ const ChatComponent: React.FC = () => {
     setInputValue(e.target.value);
   };
 
-  const handleSendMessage = async () => {
-    if (inputValue.trim() && !isWaitingForBot) {
-      const newMessage = { sender: 'User', text: inputValue };
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setInputValue('');
-      setIsWaitingForBot(true);
+const handleSendMessage = async () => {
+  if (inputValue.trim() && !isWaitingForBot) {
+    const newMessage = { sender: 'User', text: inputValue };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setInputValue('');
+    setIsWaitingForBot(true);
 
-      const textarea = textareaRef.current;
-      if (textarea) {
-        textarea.style.height = 'auto';
-        textarea.value = '';
-      }
-
-      try {
-        const response = await fetch('http://localhost:8000/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message: inputValue }),
-        });
-
-        const data = await response.json();
-
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: 'Bot', text: data.response }
-        ]);
-      } catch (error) {
-        console.error('Error sending message:', error);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: 'Bot', text: 'Sorry, I encountered an error. Please try again.' }
-        ]);
-      } finally {
-        setIsWaitingForBot(false);
-      }
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.value = '';
     }
-  };
+
+    try {
+      const response = await fetch('http://localhost:8000/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: inputValue }),
+      });
+
+      const data = await response.json();
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: 'Bot', text: data.response }
+      ]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: 'Bot', text: 'Sorry, I encountered an error. Please try again.' }
+      ]);
+    } finally {
+      setIsWaitingForBot(false);
+    }
+  }
+};
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
